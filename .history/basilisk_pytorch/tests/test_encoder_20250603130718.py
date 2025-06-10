@@ -4,8 +4,8 @@ import pytest
 import torch
 import torch.nn as nn
 
-from basilisk_pytorch.modules import Encoder
-from basilisk_pytorch.architecture import (
+from satsim.modules import Encoder
+from satsim.architecture import (
     Timer,
     BSKError,
     logger,

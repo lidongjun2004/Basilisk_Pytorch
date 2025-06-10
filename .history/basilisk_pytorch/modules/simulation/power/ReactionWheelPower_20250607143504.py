@@ -23,36 +23,11 @@ class ReactionWheelPower(nn.Module):
         if elecToMechEfficiency <= 0.0:
             raise ValueError("elec_to_mech_eff must be a strictly positive value.")
         
+        # 注册为不可训练参数
         self.register_buffer("base_power_need", torch.tensor(basePowerNeed))
         self.register_buffer("elec_to_mech_eff", torch.tensor(elecToMechEfficiency))
         self.register_buffer("mech_to_elec_eff", torch.tensor(mechToElecEfficiency))
         
+        # 初始化轮子状态
         self.register_buffer("omega", torch.tensor(0.0))
         self.register_buffer("u_current", torch.tensor(0.0))
-
-    def forward(self, omega: Tensor, u_current: Tensor) -> Tensor:
-        """
-        计算反作用轮功率需求
-        
-        参数:
-            omega (Tensor): 轮子角速度 (rad/s)
-            u_current (Tensor): 当前控制力矩 (N·m)
-            
-        返回:
-            Tensor: 净功率需求 (W)，负值表示消耗功率
-        """
-
-        self.omega = omega
-        self.u_current = u_current
-        
-        wheel_power = omega * u_current
-        
-        if self.mech_to_elec_eff < 0 or wheel_power > 0:
-            # 加速模式或不回收模式
-            total_power = self.base_power_need + torch.abs(wheel_power) / self.elec_to_mech_eff
-        else:
-            # 能量回收模式
-            total_power = self.base_power_need + self.mech_to_elec_eff * wheel_power
-        
-        # 返回负值表示功率消耗
-        return -total_power

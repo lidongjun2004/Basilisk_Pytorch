@@ -1,6 +1,6 @@
 import torch
 from basilisk_pytorch.modules.simulation.power.simpleBattery import SimpleBattery
-from architecture.simulator import Simulator
+from basilisk_pytorch.architecture.simulator import Simulator
 
 
 def test_battery_initialization():

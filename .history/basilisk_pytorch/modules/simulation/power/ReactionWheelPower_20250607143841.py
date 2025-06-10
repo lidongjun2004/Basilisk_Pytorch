@@ -47,6 +47,7 @@ class ReactionWheelPower(nn.Module):
         
         wheel_power = omega * u_current
         
+        # 计算总功率需求
         if self.mech_to_elec_eff < 0 or wheel_power > 0:
             # 加速模式或不回收模式
             total_power = self.base_power_need + torch.abs(wheel_power) / self.elec_to_mech_eff
