@@ -45,15 +45,13 @@ class ReactionWheelPower(nn.Module):
         self.u_current = u_current
         
         wheel_power = omega * u_current
-        # 创建条件掩码
-        is_accel_mode = (self.mech_to_elec_eff < 0) | (wheel_power > 0)
         
-        # 分别计算两种模式的功率
-        accel_power = self.base_power_need + torch.abs(wheel_power) / self.elec_to_mech_eff
-        regen_power = self.base_power_need + self.mech_to_elec_eff * wheel_power
-        
-        # 根据模式选择功率值
-        total_power = torch.where(is_accel_mode, accel_power, regen_power)
+        if self.mech_to_elec_eff < 0 or wheel_power > 0:
+            # 加速模式或不回收模式
+            total_power = self.base_power_need + torch.abs(wheel_power) / self.elec_to_mech_eff
+        else:
+            # 能量回收模式
+            total_power = self.base_power_need + self.mech_to_elec_eff * wheel_power
         
         # 返回负值表示功率消耗
         return -total_power

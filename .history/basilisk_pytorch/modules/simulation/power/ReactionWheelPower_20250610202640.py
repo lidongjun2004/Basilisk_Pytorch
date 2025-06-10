@@ -54,6 +54,12 @@ class ReactionWheelPower(nn.Module):
         
         # 根据模式选择功率值
         total_power = torch.where(is_accel_mode, accel_power, regen_power)
+        if self.mech_to_elec_eff < 0 or wheel_power > 0:
+            # 加速模式或不回收模式
+            total_power = self.base_power_need + torch.abs(wheel_power) / self.elec_to_mech_eff
+        else:
+            # 能量回收模式
+            total_power = self.base_power_need + self.mech_to_elec_eff * wheel_power
         
         # 返回负值表示功率消耗
         return -total_power
