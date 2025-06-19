@@ -1,5 +1,5 @@
 import torch
-from basilisk_pytorch.modules.simulation.power.simpleBattery import SimpleBattery
+from satsim.modules.simulation.power.simpleBattery import SimpleBattery
 from architecture.simulator import Simulator
 
 
